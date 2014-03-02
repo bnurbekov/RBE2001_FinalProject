@@ -24,6 +24,7 @@ void loop()
 		runMPU6050();
 	else
 		code();
+	delay(1);
 }
 
 void code(){
@@ -39,16 +40,18 @@ void code(){
 	lineFollow(followerM);
 	lineFollow(followerR);
 
-	gyroPID();
+	//gyroPID();
 
-	//if(followerM[1] <= 700 || followerL[1] <= 700 || followerR[1] <= 700){
-		driveL.write(left);		//110 + followerL[5]-followerR[5]);
-		driveR.write(right);		//70 - followerR[5]+followerL[5]);
-	//}
-	//else{
-		//driveL.write(90);
-		//driveR.write(90);
-	//}
+	if(followerM[1] <= 700 || followerL[1] <= 700 || followerR[1] <= 700){
+		//driveL.write(left);
+		driveL.write(followerL[5]-followerR[5]);
+		//driveR.write(right);
+		driveR.write(followerR[5]+followerL[5]);
+	}
+	else{
+		driveL.write(90);
+		driveR.write(90);
+	}
 
 	serialComms();
 
@@ -71,6 +74,8 @@ void code(){
 
 	if(output < -30)
 		armMotor.write((-30)+90);
+	else if(output > 50)
+		armMotor.write((50)+90);
 	else
 		armMotor.write(output+90);
 
@@ -87,8 +92,11 @@ void serialComms(){
 		}
 		else if(s.equals("pollYaw") && mpuEnabled)
 			pollYaw ^= 1;
-		else if(s.equals("zeroYaw") && mpuEnabled)
+		else if(s.equals("zeroYaw") && mpuEnabled){
 			yawOffset = getYaw();
+			yintegral = 0;
+			yderivative = 0;
+		}
 		else if(s.equals("rawYaw"))
 			yawOffset = 0;
 		else if(s.startsWith("kp=")){
@@ -114,11 +122,15 @@ void serialComms(){
 		else{
 			int n = s.toInt();
 			setPoint = n;
+			//yintegral = 0;
+			//theta = n;
 		}
 		Serial.read();
 	}
-	if(pollYaw && mpuEnabled)
-		Serial.println(yaw);
+	//if(pollYaw && mpuEnabled)
+		Serial.print(yaw);
+		Serial.print("\t");
+		Serial.println(youtput);
 	//Serial.print(followerL[5]);
 	//Serial.print("\t");
 	//Serial.println(followerM[1]);
@@ -179,13 +191,8 @@ void lineFollow(double lFollower[]){
 }
 
 void gyroPID(){
-	double kP = 2;
-	double kI = 2;
-	double kD = 0.03;
 
-	theta = 0;
-
-	if(abs(yer) < 20)
+	if(abs(yer) < 30)
 		yintegral += yer*dt;
 	else
 		yintegral = 0;
@@ -204,19 +211,19 @@ void gyroPID(){
 	else
 		yderivative = 0;
 
-	youtput = yer*kP + yderivative*kD + yintegral*kI;
+	youtput = yer*kPY + yderivative*kDY + yintegral*kIY;
 
 	left = 90 + youtput;
 	right = 90 + youtput;
 
-	if(left > 150)
-		left = 150;
-	else if(left <  30)
-		left = 30;
+	if(left > 130)
+		left = 130;
+	else if(left <  50)
+		left = 50;
 
-	if(right > 150)
-		right = 150;
-	else if(right <  30)
-		right = 30;
+	if(right > 130)
+		right = 130;
+	else if(right <  50)
+		right = 50;
 }
 

@@ -37,6 +37,11 @@ double yaw = 0;
 double yawOffset = 0;
 bool mpuEnabled = true;
 double left, right;
+
+double kPY = 3;
+double kIY = 0.5;
+double kDY = 0.05;
+
 String s;
 
 //Objects

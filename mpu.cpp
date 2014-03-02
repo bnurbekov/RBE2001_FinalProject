@@ -40,8 +40,8 @@ void setupMPU6050(){
 	mpu.setXGyroOffset(100);
 	mpu.setYGyroOffset(-15);
 	mpu.setZGyroOffset(7);
-	mpu.setXAccelOffset(-342);
-	mpu.setYAccelOffset(-1050);
+	mpu.setXAccelOffset(-344);
+	mpu.setYAccelOffset(-1060);
 	mpu.setZAccelOffset(1535);
 
 	// make sure it worked (returns 0 if so)
