@@ -37,11 +37,11 @@ void setupMPU6050(){
 	mpu.initialize();
 	devStatus = mpu.dmpInitialize();
 
-	mpu.setXGyroOffset(135);
-	mpu.setYGyroOffset(21);
-	mpu.setZGyroOffset(6.75);
-	mpu.setXAccelOffset(-312);
-	mpu.setYAccelOffset(-1223);
+	mpu.setXGyroOffset(100);
+	mpu.setYGyroOffset(-15);
+	mpu.setZGyroOffset(7);
+	mpu.setXAccelOffset(-342);
+	mpu.setYAccelOffset(-1050);
 	mpu.setZAccelOffset(1535);
 
 	// make sure it worked (returns 0 if so)

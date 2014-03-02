@@ -34,6 +34,8 @@ void code();
 void timerIsr();
 void serialComms();
 float getYaw();
+void lineFollow(double[]);
+void gyroPID();
 
 //Do not add code below this line
 #endif /* _rbe2001RobotMega_H_ */
