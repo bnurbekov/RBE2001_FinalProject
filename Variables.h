@@ -37,6 +37,7 @@ double yaw = 0;
 double yawOffset = 0;
 bool mpuEnabled = true;
 double left, right;
+int lastRead = -1;
 
 double kPY = 3;
 double kIY = 0.5;

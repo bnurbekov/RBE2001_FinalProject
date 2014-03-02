@@ -42,15 +42,40 @@ void code(){
 
 	//gyroPID();
 
+	if(followerM[1] > 700 && followerL[1] > 700 && followerR[1] <= 700){
+		lastRead = 2;
+	}
+
+	if(followerM[1] <= 700 && followerL[1] > 700 && followerR[1] > 700){
+			lastRead = 1;
+	}
+
+	if(followerM[1] > 700 && followerL[1] <= 700 && followerR[1] <= 700){
+			lastRead = 0;
+	}
+
 	if(followerM[1] <= 700 || followerL[1] <= 700 || followerR[1] <= 700){
 		//driveL.write(left);
-		driveL.write(followerL[5]-followerR[5]);
+		driveL.write(90+followerL[5]-followerR[5]+25);
 		//driveR.write(right);
-		driveR.write(followerR[5]+followerL[5]);
+		driveR.write(90-followerR[5]+followerL[5]-25);
 	}
+
 	else{
-		driveL.write(90);
-		driveR.write(90);
+		if(lastRead == 2){
+			driveL.write(70);
+			driveR.write(110);
+		}
+
+		else if(lastRead == 1){
+			driveL.write(110);
+			driveR.write(70);
+		}
+
+		else{
+			driveL.write(90);
+			driveR.write(90);
+		}
 	}
 
 	serialComms();
@@ -156,17 +181,17 @@ void lineFollow(double lFollower[]){
 			break;
 		break;
 	case 1://mid follower
-		followerM[2] = followerM[1];
-		followerM[1] = lineVal - analogRead(14);
+		followerM[2] = followerM[1]; //lasterror = error
+		followerM[1] = lineVal - analogRead(14); //error = lineVal - analogRead
 
-		if(followerM[0] != 0)
-			followerM[3] = (followerM[1]-followerM[2])/followerM[0];
+		if(followerM[0] != 0) //if dt != 0
+			followerM[3] = (followerM[1]-followerM[2])/followerM[0]; //(derivative = error-lasterror)/dt
 		else
-			followerM[3] = 0;
+			followerM[3] = 0; //derivative = 0
 
-		followerM[4] += followerM[1]*followerM[0];
+		followerM[4] += followerM[1]*followerM[0]; //integral = integral+error
 
-		followerM[5] = followerM[1]*lKP + followerM[4]*lKI + followerM[3]*lKD;
+		followerM[5] = followerM[1]*lKP + followerM[4]*lKI + followerM[3]*lKD; //output = error*kp + integral*ki + derivative*kd
 
 		if(abs(followerM[5]) > 90)
 			followerM[5] = 90*(abs(followerM[5])/followerM[5]);
